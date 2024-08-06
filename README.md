@@ -319,11 +319,11 @@ The microphone and camera can be obtained from Taobao. Whereas other LIDAR and R
 If you have any issues in recreating this rig, feel free to drop an issue in this dataset repo -->
 
 # Notes:
-For more information on the sensors and how to use the dataset, please checkout the other sections.
+<!-- For more information on the sensors and how to use the dataset, please checkout the other sections.
 
-For resources and other works of our group please checkout our [github](https://github.com/ntu-aris).
+For resources and other works of our group please checkout our [github](https://github.com/ntu-aris). -->
 
-If you have some inquiry, please raise an [issue](https://github.com/ntu-aris/MMAUD/issues) on github.
+If you have some inquiry, please raise an [issue](https://github.com/LQIUTONG/HelmetPoser.github.io/issues) on github.
 
 # Citation
 If you use some resource from this data suite, please cite it as
