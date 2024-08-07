@@ -21,7 +21,7 @@ The dataset recording for the three actions was completed by 10 participants as 
 <div style="display: flex; justify-content: center; gap: 0;">
   <img src="video/walk.gif" alt="Walking" width="300" />
   <img src="video/run.gif" alt="Running" width="300" />
-  <img src="videos/stair.gif" alt="Stair Climbing" width="300" />
+  <img src="video/stair.gif" alt="Stair Climbing" width="300" />
 </div>
 
 # Downloads
