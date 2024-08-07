@@ -19,18 +19,9 @@ The hardware diagram of HelMet Poser is shown as follows:
 The dataset recording for the three actions was completed by 10 participants as shown below.
 
 <div style="display: flex; justify-content: center; gap: 0;">
-  <video controls width="300">
-    <source src="video/Walk.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <video controls width="300">
-    <source src="video/Run.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <video controls width="300">
-    <source src="video/Stair.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+  <img src="video/walk.gif" alt="Walking" width="300" />
+  <img src="video/run.gif" alt="Running" width="300" />
+  <img src="videos/stair.gif" alt="Stair Climbing" width="300" />
 </div>
 
 # Downloads
