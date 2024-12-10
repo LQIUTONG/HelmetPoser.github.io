@@ -320,7 +320,12 @@ If you have some inquiry, please raise an [issue](https://github.com/LQIUTONG/He
 If you use some resource from this data suite, please cite it as
 
 ```
-
+@article{li2024helmetposer,
+  title={HelmetPoser: A Helmet-Mounted IMU Dataset for Data-Driven Estimation of Human Head Motion in Diverse Conditions},
+  author={Li, Jianping and Leng, Qiutong and Liu, Jinxing and Xu, Xinhang and Jin, Tongxin and Cao, Muqing and Nguyen, Thien-Minh and Yuan, Shenghai and Cao, Kun and Xie, Lihua},
+  journal={arXiv preprint arXiv:2409.05006},
+  year={2024}
+}
 ```
 
 # Licence
