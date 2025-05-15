@@ -24,6 +24,33 @@ The dataset recording for the three actions was completed by 10 participants as 
   <img src="video/stair.gif" alt="Stair Climbing" width="300" />
 </div>
 
+# Demo Video
+
+<div class="video-container">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/nv4GcTK8uEQ?si=aKM1CmmgT7jIJFQW" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+<style>
+/* 响应式视频容器 */
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 30px;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container iframe,
+.video-container object,
+.video-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
 # Downloads
 
 Our dataset for this study can be downloaded directly through [this link](https://drive.google.com/drive/folders/17zXelc3acoyY49U6o2rZdKZ3fnDUKN4L?usp=sharing).
