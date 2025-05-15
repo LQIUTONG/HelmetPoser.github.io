@@ -51,7 +51,7 @@ The dataset recording for the three actions was completed by 10 participants as 
 }
 </style>
 
-# Downloads
+# Dataset Downloads
 
 Our dataset for this study can be downloaded directly through [this link](https://drive.google.com/drive/folders/17zXelc3acoyY49U6o2rZdKZ3fnDUKN4L?usp=sharing).
 
