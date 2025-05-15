@@ -12,17 +12,17 @@
     <div class="sidebar">
       <h1>{{ site.title }}</h1>
       <form>
-        <input type="text" placeholder="搜索..." />
+        <input type="text" placeholder="搜索..." id="sidebar-search" />
       </form>
       
       <div class="sidebar-nav">
-        <ul>
-          <li><a href="#demonstration-video">演示视频</a></li>
-          <li><a href="#downloads">数据集下载</a></li>
-          <li><a href="https://arxiv.org/abs/2409.05006" target="_blank">阅读论文</a></li>
-          <li><a href="https://github.com/LQIUTONG/HelmetPoser.github.io" target="_blank">GitHub仓库</a></li>
-          <li><a href="#citation">引用</a></li>
-        </ul>
+        <div class="outline-title">目录</div>
+        <div id="toc-container">
+          <ul id="toc" class="toc-list">
+            <!-- 这里将由JavaScript自动填充大纲 -->
+            <li><em>加载中...</em></li>
+          </ul>
+        </div>
       </div>
     </div>
     
@@ -51,27 +51,134 @@
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        var searchInput = document.querySelector('.sidebar input[type="text"]');
+        // 自动生成大纲
+        generateTableOfContents();
+        
+        // 搜索功能
+        var searchInput = document.getElementById('sidebar-search');
         searchInput.addEventListener('input', function() {
-          // 简单搜索功能实现
           var searchTerm = this.value.toLowerCase();
-          var contentElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p');
+          var contentElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content p');
           
           if (searchTerm.length > 1) {
             contentElements.forEach(function(el) {
               if (el.textContent.toLowerCase().includes(searchTerm)) {
                 el.style.backgroundColor = '#ffffc9';
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
               } else {
                 el.style.backgroundColor = '';
+              }
+            });
+            
+            // 同时搜索大纲
+            var tocItems = document.querySelectorAll('#toc a');
+            tocItems.forEach(function(item) {
+              var text = item.textContent.toLowerCase();
+              var li = item.parentElement;
+              
+              if (text.includes(searchTerm)) {
+                item.classList.add('highlighted');
+              } else {
+                item.classList.remove('highlighted');
               }
             });
           } else {
             contentElements.forEach(function(el) {
               el.style.backgroundColor = '';
             });
+            
+            // 清除大纲高亮
+            var tocItems = document.querySelectorAll('#toc a');
+            tocItems.forEach(function(item) {
+              item.classList.remove('highlighted');
+            });
           }
         });
+        
+        // 添加滚动监听，高亮当前章节
+        window.addEventListener('scroll', highlightCurrentSection);
       });
+      
+      // 生成目录函数
+      function generateTableOfContents() {
+        var mainContent = document.querySelector('.main-content');
+        var headings = mainContent.querySelectorAll('h1, h2, h3, h4');
+        var toc = document.getElementById('toc');
+        
+        // 清空加载中提示
+        toc.innerHTML = '';
+        
+        headings.forEach(function(heading, index) {
+          // 为每个标题创建ID，如果没有的话
+          if (!heading.id) {
+            var id = 'heading-' + index;
+            heading.id = id;
+          }
+          
+          var li = document.createElement('li');
+          var a = document.createElement('a');
+          a.textContent = heading.textContent;
+          a.setAttribute('href', '#' + heading.id);
+          
+          // 设置不同级别标题的样式
+          if (heading.tagName === 'H1') {
+            li.classList.add('toc-h1');
+          } else if (heading.tagName === 'H2') {
+            li.classList.add('toc-h2');
+          } else if (heading.tagName === 'H3') {
+            li.classList.add('toc-h3');
+          } else if (heading.tagName === 'H4') {
+            li.classList.add('toc-h4');
+          }
+          
+          // 添加点击事件
+          a.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 平滑滚动到目标位置
+            document.getElementById(heading.id).scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+            
+            // 更新URL的hash
+            history.pushState(null, null, '#' + heading.id);
+          });
+          
+          li.appendChild(a);
+          toc.appendChild(li);
+        });
+      }
+      
+      // 高亮当前章节函数
+      function highlightCurrentSection() {
+        var headings = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content h4');
+        var tocLinks = document.querySelectorAll('#toc a');
+        var scrollPosition = window.scrollY;
+        
+        // 寻找当前视图中的标题
+        var currentHeading = null;
+        
+        headings.forEach(function(heading) {
+          var headingTop = heading.offsetTop;
+          if (headingTop - 100 <= scrollPosition) {
+            currentHeading = heading;
+          }
+        });
+        
+        // 清除所有高亮
+        tocLinks.forEach(function(link) {
+          link.classList.remove('active');
+        });
+        
+        // 高亮当前章节
+        if (currentHeading) {
+          var currentLink = document.querySelector('#toc a[href="#' + currentHeading.id + '"]');
+          if (currentLink) {
+            currentLink.classList.add('active');
+          }
+        }
+      }
     </script>
   </body>
 </html> 

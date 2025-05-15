@@ -58,34 +58,75 @@ body {
   padding-top: 20px;
 }
 
-.sidebar-nav ul {
+.outline-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#toc-container {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.toc-list {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.sidebar-nav li {
-  margin-bottom: 12px;
+.toc-list li {
+  margin-bottom: 8px;
 }
 
-.sidebar-nav a {
+.toc-list a {
   color: white;
   display: block;
-  padding: 10px 15px;
+  padding: 8px 10px;
   border-radius: 4px;
   text-decoration: none;
   transition: all 0.3s ease;
-  font-weight: 500;
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
-.sidebar-nav a:hover {
+.toc-list a:hover {
   background-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
-.sidebar-nav a:active {
-  transform: translateY(0);
+.toc-list a.active {
+  background-color: rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+}
+
+.toc-list a.highlighted {
+  background-color: rgba(255, 255, 200, 0.2);
+}
+
+/* 目录层级样式 */
+.toc-h1 {
+  font-weight: 600;
+}
+
+.toc-h2 {
+  padding-left: 15px;
+  font-size: 0.95em;
+}
+
+.toc-h3 {
+  padding-left: 30px;
+  font-size: 0.9em;
+}
+
+.toc-h4 {
+  padding-left: 45px;
+  font-size: 0.85em;
 }
 
 /* 主内容区域 */
