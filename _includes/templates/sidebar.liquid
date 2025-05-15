@@ -1,3 +1,5 @@
+{% include common/rest/defaults.liquid %}
+
 <div class="sidebar-wrap overflow-hidden">
     <div class="sidebar height-full overflow-y-scroll overflow-x-hidden">
         <div class="header d-flex flex-column p-3 text-center">
@@ -6,13 +8,159 @@
                     <i class="fa fa-home"></i> {{ site.title }}
                 </a>
             </div>
-            <span class="version">{{ docs.latest_release.name }}</span>
+            <span class="version">{{ docs.latest_release }}</span>
             <form class="search pt-2" action="{{ site.baseurl }}/search.html" method="get" autocomplete="off">
-                <input class="form-control input-block input-sm" type="text" name="q" placeholder="{{ __.search_docs | default: 'Search docs...' }}">
+                <input class="form-control input-block input-sm" type="text" name="q" placeholder="搜索...">
             </form>
         </div>
         <div class="toctree py-2" data-spy="affix" role="navigation" aria-label="main navigation">
+            <!-- 标准侧边栏导航 -->
             {% include templates/toctree.liquid %}
+            
+            <!-- 自动生成的目录大纲 -->
+            <div class="outline-title py-2 px-3 text-uppercase">目录导航</div>
+            <div id="toc-container" class="px-2">
+                <ul id="toc" class="toc-list list-unstyled">
+                    <li><em>加载中...</em></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 自动生成大纲
+    generateTableOfContents();
+    
+    // 添加滚动监听，高亮当前章节
+    window.addEventListener('scroll', highlightCurrentSection);
+});
+
+// 生成目录函数
+function generateTableOfContents() {
+    var mainContent = document.querySelector('.main');
+    if (!mainContent) return;
+    
+    var headings = mainContent.querySelectorAll('h1, h2, h3, h4');
+    var toc = document.getElementById('toc');
+    
+    // 清空加载中提示
+    toc.innerHTML = '';
+    
+    if (headings.length === 0) {
+        var li = document.createElement('li');
+        li.innerHTML = '<em>内容中没有标题</em>';
+        toc.appendChild(li);
+        return;
+    }
+    
+    headings.forEach(function(heading, index) {
+        // 为每个标题创建ID，如果没有的话
+        if (!heading.id) {
+            var id = 'heading-' + index;
+            heading.id = id;
+        }
+        
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.textContent = heading.textContent;
+        a.setAttribute('href', '#' + heading.id);
+        a.classList.add('d-block', 'py-1', 'text-truncate');
+        
+        // 设置不同级别标题的样式
+        if (heading.tagName === 'H1') {
+            a.classList.add('toc-h1');
+        } else if (heading.tagName === 'H2') {
+            a.classList.add('toc-h2', 'pl-3');
+        } else if (heading.tagName === 'H3') {
+            a.classList.add('toc-h3', 'pl-4');
+        } else if (heading.tagName === 'H4') {
+            a.classList.add('toc-h4', 'pl-5');
+        }
+        
+        // 添加点击事件
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 平滑滚动到目标位置
+            document.getElementById(heading.id).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+            
+            // 更新URL的hash
+            history.pushState(null, null, '#' + heading.id);
+        });
+        
+        li.appendChild(a);
+        toc.appendChild(li);
+    });
+}
+
+// 高亮当前章节函数
+function highlightCurrentSection() {
+    var headings = document.querySelectorAll('h1, h2, h3, h4');
+    var tocLinks = document.querySelectorAll('#toc a');
+    var scrollPosition = window.scrollY;
+    
+    // 寻找当前视图中的标题
+    var currentHeading = null;
+    
+    headings.forEach(function(heading) {
+        var headingTop = heading.offsetTop;
+        if (headingTop - 100 <= scrollPosition) {
+            currentHeading = heading;
+        }
+    });
+    
+    // 清除所有高亮
+    tocLinks.forEach(function(link) {
+        link.classList.remove('active');
+    });
+    
+    // 高亮当前章节
+    if (currentHeading) {
+        var currentLink = document.querySelector('#toc a[href="#' + currentHeading.id + '"]');
+        if (currentLink) {
+            currentLink.classList.add('active', 'bg-theme-light');
+        }
+    }
+}
+</script>
+
+<style>
+.outline-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #a0a0a0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+}
+
+#toc-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.toc-list a {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.toc-list a:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.toc-list a.active {
+    color: white;
+    font-weight: 600;
+}
+
+.toc-h1 { font-weight: 600; }
+.toc-h2 { padding-left: 10px; }
+.toc-h3 { padding-left: 20px; }
+.toc-h4 { padding-left: 30px; }
+</style>
