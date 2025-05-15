@@ -4,7 +4,7 @@
 
 # [HelmetPoser: A Helmet-Mounted IMU Dataset for Data-Driven Estimation of Human Head Motion in Diverse Conditions](https://github.com/LQIUTONG/HelmetPoser.github.io)
 
-
+# Introduction
 
 The hardware diagram of HelMet Poser is shown as follows:
 

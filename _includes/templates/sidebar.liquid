@@ -20,7 +20,12 @@
             <div class="outline-title py-2 px-3 text-uppercase">目录导航</div>
             <div id="toc-container" class="px-2">
                 <ul id="toc" class="toc-list list-unstyled">
-                    <li><em>加载中...</em></li>
+                    <li><a href="#introduction" class="d-block py-1 text-truncate toc-h1">Introduction</a></li>
+                    <li><a href="#demonstration-video" class="d-block py-1 text-truncate toc-h2 pl-3">Demonstration Video</a></li>
+                    <li><a href="#downloads" class="d-block py-1 text-truncate toc-h2 pl-3">Downloads</a></li>
+                    <li><a href="#notes" class="d-block py-1 text-truncate toc-h2 pl-3">Notes</a></li>
+                    <li><a href="#citation" class="d-block py-1 text-truncate toc-h2 pl-3">Citation</a></li>
+                    <li><a href="#licence" class="d-block py-1 text-truncate toc-h2 pl-3">Licence</a></li>
                 </ul>
             </div>
         </div>
@@ -30,142 +35,84 @@
 <script>
 // 页面加载完成后执行
 window.addEventListener('load', function() {
-    setTimeout(function() {
-        // 自动生成大纲
-        generateTableOfContents();
-        
-        // 添加滚动监听，高亮当前章节
-        window.addEventListener('scroll', highlightCurrentSection);
-    }, 1000); // 延迟1000ms确保DOM完全加载
+    // 设置手动目录点击事件和高亮
+    setupManualToc();
+    
+    // 添加滚动监听，高亮当前章节
+    window.addEventListener('scroll', highlightCurrentSection);
+    
+    // 更新调试信息
+    document.getElementById('debug-info').innerHTML = 
+        '<p>页面已加载完成 ' + new Date().toLocaleTimeString() + '</p>' +
+        '<p>版本: v1.2.1</p>';
 });
 
-// 生成目录函数
-function generateTableOfContents() {
-    console.log("开始生成目录...");
-    
-    // 使用更多选择器尝试查找主内容区域
-    var contentSelectors = [
-        '.main',                 // 标准主内容
-        '.markdown-body',        // GitHub风格markdown
-        '.main-content',         // 通用主内容
-        'article',               // 文章标签
-        'main',                  // 主标签
-        '.content',              // 内容类
-        '#readme',               // README ID
-        '.readme'                // README 类
-    ];
-    
-    var mainContent = null;
-    for (var i = 0; i < contentSelectors.length; i++) {
-        var element = document.querySelector(contentSelectors[i]);
-        if (element) {
-            console.log("找到内容区域:", contentSelectors[i]);
-            mainContent = element;
-            break;
-        }
-    }
-    
-    // 如果仍然找不到主内容，尝试直接使用body或获取所有标题
-    if (!mainContent) {
-        console.log("未找到主内容区域，使用document.body");
-        mainContent = document.body;
-    }
-    
-    // 查找所有标题元素
-    var headings = mainContent.querySelectorAll('h1, h2, h3, h4, .markdown-heading');
-    console.log("找到标题数量:", headings.length);
-    
-    var toc = document.getElementById('toc');
-    if (!toc) {
-        console.error("找不到目录容器#toc");
-        return;
-    }
-    
-    // 清空加载中提示
-    toc.innerHTML = '';
-    
-    // 如果找不到标题，显示提示并打印页面结构以帮助调试
-    if (headings.length === 0) {
-        console.log("页面结构:", document.body.innerHTML.substring(0, 500)); // 打印页面前500个字符
-        var li = document.createElement('li');
-        li.innerHTML = '<em>内容中没有找到标题元素</em>';
-        toc.appendChild(li);
-        
-        // 尝试直接从页面中获取标题文本
-        var possibleHeadings = [];
-        var allElements = document.querySelectorAll('*');
-        for (var i = 0; i < allElements.length; i++) {
-            var el = allElements[i];
-            if (el.textContent && el.textContent.trim() && 
-                (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'H4' ||
-                 el.className.includes('title') || el.className.includes('heading'))) {
-                possibleHeadings.push(el);
-            }
-        }
-        
-        if (possibleHeadings.length > 0) {
-            console.log("找到可能的标题元素:", possibleHeadings.length);
-            headings = possibleHeadings;
-        } else {
-            return;
-        }
-    }
-    
-    // 以下是生成目录的代码
-    headings.forEach(function(heading, index) {
-        // 跳过空标题
-        if (!heading.textContent.trim()) return;
-        
-        // 为每个标题创建ID，如果没有的话
-        if (!heading.id) {
-            var id = 'heading-' + index;
-            heading.id = id;
-        }
-        
-        var li = document.createElement('li');
-        var a = document.createElement('a');
-        a.textContent = heading.textContent.trim();
-        a.setAttribute('href', '#' + heading.id);
-        a.classList.add('d-block', 'py-1', 'text-truncate');
-        
-        // 设置不同级别标题的样式
-        if (heading.tagName === 'H1') {
-            a.classList.add('toc-h1');
-        } else if (heading.tagName === 'H2') {
-            a.classList.add('toc-h2', 'pl-3');
-        } else if (heading.tagName === 'H3') {
-            a.classList.add('toc-h3', 'pl-4');
-        } else if (heading.tagName === 'H4') {
-            a.classList.add('toc-h4', 'pl-5');
-        } else {
-            // 其他元素，可能是具有标题样式的div等
-            a.classList.add('toc-h2', 'pl-3');
-        }
-        
-        // 添加点击事件
-        a.addEventListener('click', function(e) {
+// 设置手动添加的目录链接
+function setupManualToc() {
+    var tocLinks = document.querySelectorAll('#toc a');
+    tocLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // 平滑滚动到目标位置
-            document.getElementById(heading.id).scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            // 获取目标ID
+            var targetId = this.getAttribute('href').substring(1);
+            var targetElement = document.getElementById(targetId);
             
-            // 更新URL的hash
-            history.pushState(null, null, '#' + heading.id);
+            // 如果找到了目标元素，滚动到其位置
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // 更新URL的hash
+                history.pushState(null, null, '#' + targetId);
+                
+                // 更新调试信息
+                document.getElementById('debug-info').innerHTML = 
+                    '<p>成功滚动到: ' + targetId + '</p>' +
+                    '<p>时间: ' + new Date().toLocaleTimeString() + '</p>';
+            } else {
+                // 显示错误信息
+                document.getElementById('debug-info').innerHTML = 
+                    '<p>⚠️ 找不到元素: ' + targetId + '</p>' +
+                    '<p>尝试直接滚动到相应文本</p>';
+                
+                // 备用方案：查找包含相似文本的元素
+                var heading = findHeadingByText(this.textContent);
+                if (heading) {
+                    heading.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    document.getElementById('debug-info').innerHTML += '<p>找到并滚动到相似文本</p>';
+                }
+            }
+            
+            // 清除其他高亮
+            tocLinks.forEach(function(l) { l.classList.remove('active', 'bg-theme-light'); });
+            
+            // 添加当前项高亮
+            this.classList.add('active', 'bg-theme-light');
         });
-        
-        li.appendChild(a);
-        toc.appendChild(li);
     });
-    
-    console.log("目录生成完成");
+}
+
+// 通过文本内容查找标题
+function findHeadingByText(text) {
+    var allElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    for (var i = 0; i < allElements.length; i++) {
+        if (allElements[i].textContent.includes(text) || 
+            text.includes(allElements[i].textContent)) {
+            return allElements[i];
+        }
+    }
+    return null;
 }
 
 // 高亮当前章节函数
 function highlightCurrentSection() {
-    var headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], .markdown-heading[id]');
+    var headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     var tocLinks = document.querySelectorAll('#toc a');
     var scrollPosition = window.scrollY;
     
@@ -181,12 +128,25 @@ function highlightCurrentSection() {
     
     // 清除所有高亮
     tocLinks.forEach(function(link) {
-        link.classList.remove('active');
+        link.classList.remove('active', 'bg-theme-light');
     });
     
     // 高亮当前章节
     if (currentHeading) {
-        var currentLink = document.querySelector('#toc a[href="#' + currentHeading.id + '"]');
+        // 尝试通过ID匹配
+        var currentId = currentHeading.id;
+        var currentLink = document.querySelector('#toc a[href="#' + currentId + '"]');
+        
+        // 如果找不到匹配的链接，尝试通过文本内容匹配
+        if (!currentLink) {
+            tocLinks.forEach(function(link) {
+                if (link.textContent.includes(currentHeading.textContent) || 
+                    currentHeading.textContent.includes(link.textContent)) {
+                    currentLink = link;
+                }
+            });
+        }
+        
         if (currentLink) {
             currentLink.classList.add('active', 'bg-theme-light');
         }
@@ -228,4 +188,13 @@ function highlightCurrentSection() {
 .toc-h2 { padding-left: 10px; }
 .toc-h3 { padding-left: 20px; }
 .toc-h4 { padding-left: 30px; }
+
+/* 调试信息区域样式 */
+#debug-info {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 4px;
+    margin-top: 15px;
+    font-family: monospace;
+}
 </style>
