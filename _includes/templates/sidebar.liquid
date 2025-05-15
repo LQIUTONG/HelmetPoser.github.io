@@ -36,39 +36,86 @@ window.addEventListener('load', function() {
         
         // 添加滚动监听，高亮当前章节
         window.addEventListener('scroll', highlightCurrentSection);
-    }, 500); // 延迟500ms确保DOM完全加载
+    }, 1000); // 延迟1000ms确保DOM完全加载
 });
 
 // 生成目录函数
 function generateTableOfContents() {
-    // 查找文章主体内容 - 尝试多种可能的选择器
-    var mainContent = document.querySelector('.main') || 
-                      document.querySelector('.markdown-body') || 
-                      document.querySelector('.main-content') ||
-                      document.querySelector('main');
-                      
-    if (!mainContent) {
-        console.error('无法找到主内容区域');
-        document.getElementById('toc').innerHTML = '<li><em>无法生成目录</em></li>';
-        return;
+    console.log("开始生成目录...");
+    
+    // 使用更多选择器尝试查找主内容区域
+    var contentSelectors = [
+        '.main',                 // 标准主内容
+        '.markdown-body',        // GitHub风格markdown
+        '.main-content',         // 通用主内容
+        'article',               // 文章标签
+        'main',                  // 主标签
+        '.content',              // 内容类
+        '#readme',               // README ID
+        '.readme'                // README 类
+    ];
+    
+    var mainContent = null;
+    for (var i = 0; i < contentSelectors.length; i++) {
+        var element = document.querySelector(contentSelectors[i]);
+        if (element) {
+            console.log("找到内容区域:", contentSelectors[i]);
+            mainContent = element;
+            break;
+        }
     }
     
-    var headings = mainContent.querySelectorAll('h1, h2, h3, h4');
+    // 如果仍然找不到主内容，尝试直接使用body或获取所有标题
+    if (!mainContent) {
+        console.log("未找到主内容区域，使用document.body");
+        mainContent = document.body;
+    }
+    
+    // 查找所有标题元素
+    var headings = mainContent.querySelectorAll('h1, h2, h3, h4, .markdown-heading');
+    console.log("找到标题数量:", headings.length);
+    
     var toc = document.getElementById('toc');
+    if (!toc) {
+        console.error("找不到目录容器#toc");
+        return;
+    }
     
     // 清空加载中提示
     toc.innerHTML = '';
     
+    // 如果找不到标题，显示提示并打印页面结构以帮助调试
     if (headings.length === 0) {
+        console.log("页面结构:", document.body.innerHTML.substring(0, 500)); // 打印页面前500个字符
         var li = document.createElement('li');
-        li.innerHTML = '<em>内容中没有标题</em>';
+        li.innerHTML = '<em>内容中没有找到标题元素</em>';
         toc.appendChild(li);
-        return;
+        
+        // 尝试直接从页面中获取标题文本
+        var possibleHeadings = [];
+        var allElements = document.querySelectorAll('*');
+        for (var i = 0; i < allElements.length; i++) {
+            var el = allElements[i];
+            if (el.textContent && el.textContent.trim() && 
+                (el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'H4' ||
+                 el.className.includes('title') || el.className.includes('heading'))) {
+                possibleHeadings.push(el);
+            }
+        }
+        
+        if (possibleHeadings.length > 0) {
+            console.log("找到可能的标题元素:", possibleHeadings.length);
+            headings = possibleHeadings;
+        } else {
+            return;
+        }
     }
     
-    console.log('找到', headings.length, '个标题');
-    
+    // 以下是生成目录的代码
     headings.forEach(function(heading, index) {
+        // 跳过空标题
+        if (!heading.textContent.trim()) return;
+        
         // 为每个标题创建ID，如果没有的话
         if (!heading.id) {
             var id = 'heading-' + index;
@@ -77,7 +124,7 @@ function generateTableOfContents() {
         
         var li = document.createElement('li');
         var a = document.createElement('a');
-        a.textContent = heading.textContent;
+        a.textContent = heading.textContent.trim();
         a.setAttribute('href', '#' + heading.id);
         a.classList.add('d-block', 'py-1', 'text-truncate');
         
@@ -90,6 +137,9 @@ function generateTableOfContents() {
             a.classList.add('toc-h3', 'pl-4');
         } else if (heading.tagName === 'H4') {
             a.classList.add('toc-h4', 'pl-5');
+        } else {
+            // 其他元素，可能是具有标题样式的div等
+            a.classList.add('toc-h2', 'pl-3');
         }
         
         // 添加点击事件
@@ -109,11 +159,13 @@ function generateTableOfContents() {
         li.appendChild(a);
         toc.appendChild(li);
     });
+    
+    console.log("目录生成完成");
 }
 
 // 高亮当前章节函数
 function highlightCurrentSection() {
-    var headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id]');
+    var headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], .markdown-heading[id]');
     var tocLinks = document.querySelectorAll('#toc a');
     var scrollPosition = window.scrollY;
     
