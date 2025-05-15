@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+    {% seo %}
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>{{ site.title }}</h1>
+      <form>
+        <input type="text" placeholder="搜索..." />
+      </form>
+      
+      <div class="sidebar-nav">
+        <ul>
+          <li><a href="#demonstration-video">演示视频</a></li>
+          <li><a href="#downloads">数据集下载</a></li>
+          <li><a href="https://arxiv.org/abs/2409.05006" target="_blank">阅读论文</a></li>
+          <li><a href="https://github.com/LQIUTONG/HelmetPoser.github.io" target="_blank">GitHub仓库</a></li>
+          <li><a href="#citation">引用</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="main-content-wrapper">
+      <header class="page-header" role="banner">
+        <h1 class="project-name">{{ site.title | default: site.github.repository_name }}</h1>
+        <h2 class="project-tagline">{{ site.description | default: site.github.project_tagline }}</h2>
+        <a href="{{ site.github.repository_url }}" class="btn">View on GitHub</a>
+        <a href="https://drive.google.com/drive/folders/17zXelc3acoyY49U6o2rZdKZ3fnDUKN4L?usp=sharing" class="btn">Download Dataset</a>
+        <a href="https://arxiv.org/abs/2409.05006" class="btn">Read Paper</a>
+      </header>
+
+      <main id="content" class="main-content" role="main">
+        {{ content }}
+
+        <footer class="site-footer">
+          <span class="site-footer-owner">
+            <a href="{{ site.github.repository_url }}">{{ site.github.repository_name }}</a> 
+            is maintained by the HelmetPoser Team.
+          </span>
+          <span class="site-footer-credits">
+            &copy; {{ site.time | date: '%Y' }} HelmetPoser Team
+          </span>
+        </footer>
+      </main>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var searchInput = document.querySelector('.sidebar input[type="text"]');
+        searchInput.addEventListener('input', function() {
+          // 简单搜索功能实现
+          var searchTerm = this.value.toLowerCase();
+          var contentElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p');
+          
+          if (searchTerm.length > 1) {
+            contentElements.forEach(function(el) {
+              if (el.textContent.toLowerCase().includes(searchTerm)) {
+                el.style.backgroundColor = '#ffffc9';
+              } else {
+                el.style.backgroundColor = '';
+              }
+            });
+          } else {
+            contentElements.forEach(function(el) {
+              el.style.backgroundColor = '';
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html> 
